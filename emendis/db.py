@@ -8,6 +8,11 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 
 def get_db():
+    """Get a database session.
+
+    No autocommit, the caller has to explicitly call db.commit().
+    """
+
     db = SessionLocal()
     try:
         yield db

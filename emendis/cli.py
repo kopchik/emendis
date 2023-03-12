@@ -21,7 +21,6 @@ def shell():
     IPython.embed()
 
 
-# separate function so can be used in tests
 def load_csv(path, db=None):
     if not db:
         db = next(get_db())
