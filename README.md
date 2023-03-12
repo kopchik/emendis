@@ -1,5 +1,7 @@
 # Emendis test task
 
+The main code resides in `emendis` directory. Endpoints are in `emendis/main.py`.
+
 ## installation 
 
 Inside *virtual environment*:
