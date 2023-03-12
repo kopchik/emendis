@@ -1,11 +1,10 @@
 import base64
 
 import orjson as json
-from fastapi.testclient import TestClient
 
-from emendis.main import app
+from emendis.cli import load_csv
 
-client = TestClient(app)
+from .conftest import client
 
 
 def dump_base64(obj: object) -> str:
@@ -14,7 +13,7 @@ def dump_base64(obj: object) -> str:
 
 
 class Test_endpoints:
-    one_data_entry = {
+    test_message = {
         "message": {
             "attributes": {"key": "value"},
             "data": dump_base64(
@@ -30,18 +29,33 @@ class Test_endpoints:
 
     def test_import_and_export_of_data(self):
         # TODO: test with multiple messages
+        # perhaps needs to be split into two tests
         r = client.post(
             "/imports/sensor-data",
-            json=[self.one_data_entry],
+            json=[self.test_message],
         )
         assert r.status_code == 200, r.json()
 
         r = client.get("/exports/sensor-data")
         assert r.status_code == 200, r.json()
-        assert r.json() == [
-            {
-                "dwell_time": 2.72,
-                "sensor_id": 100013,
-                "timestamp": "2022-11-08T04:00:04.317801",
+        assert r.json() == {
+            "data": {
+                "100013": [
+                    {
+                        "sensor_id": 100013,
+                        "dwell_time": 2.72,
+                        "timestamp": "2022-11-08T04:00:04.317801",
+                    }
+                ]
             }
-        ]
+        }
+
+    def test_kpi(self, db):
+        load_csv("tests/test_data.csv", db=db)
+        r = client.get("/exports/sensor-data/kpi")
+        assert r.json() == {
+            "data": [
+                {"avg_dwell_time": 9.206277056277052, "sensor_id": 100013},
+                {"avg_dwell_time": 10.77262910798122, "sensor_id": 100022},
+            ],
+        }

@@ -58,7 +58,7 @@ class SensorData(BaseModel):
         orm_mode = True
 
 
-# NB duplicate attributes (e.g., message_id and messageId) are removed
+# NB I removed duplicate attributes (e.g., message_id and messageId)
 class PubSubMessage(BaseModel):
     class Message(BaseModel):
         attributes: dict

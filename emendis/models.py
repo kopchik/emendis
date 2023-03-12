@@ -7,8 +7,8 @@ Base = declarative_base()
 class SensorData(Base):
     __tablename__ = "sensor_data"
     id = Column(Integer, primary_key=True, index=True)
-    sensor_id = Column(Integer)  # TODO: put index on this
-    timestamp = Column(TIMESTAMP)
+    sensor_id = Column(Integer, index=True)
+    timestamp = Column(TIMESTAMP, index=True)
     dwell_time = Column(Float)
     __table_args__ = (UniqueConstraint("sensor_id", "timestamp"),)
 
